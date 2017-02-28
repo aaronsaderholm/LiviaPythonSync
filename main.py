@@ -7,6 +7,7 @@ import json
 import os.path
 import re
 import time
+import argparse
 
 
 sys.path.append(os.path.realpath('..'))
@@ -19,6 +20,7 @@ def get_config(path):
     path = os.path.realpath(path)
 
     if os.path.isfile(path) is False:
+
         print("Could not open config file at: %s" % path)
         exit()
 
@@ -30,11 +32,9 @@ def get_config(path):
         f.close()
 
     config['path'] = os.path.dirname(f.name)
-    config['template_path'] = os.path.realpath(path + "/templates")
-    print(config)
+    config['template_path'] = config['path'] + "/templates"
     open_mysql()
-    exit()
-
+    return config
 
 def open_mysql():
 
@@ -74,22 +74,21 @@ def upload_templates():
 
     for filename in os.listdir(template_path):
         if filename.endswith(".html"):
+            print("Uploading %s" % filename)
             f = open(template_path + "/" + filename, encoding="utf-8")
             html = f.read()
-            idCMSLayout = int(filename.replace(".html", ""))
+            idCMSLayout = re.sub("[^0-9]", "", filename)
 
             if html is None:
                 continue
 
             html = ftfy.fix_text(html)
 
-            print(idCMSLayout)
             output = c.execute("""UPDATE livia.CMSLayout
                           SET LayoutMarkup=%s
                           WHERE idCMSLayout=%s""",
                                (html, idCMSLayout))
             mysql_connection.commit()
-    c.close()
 
 
 def download_templates():
@@ -97,7 +96,6 @@ def download_templates():
     c = mysql_connection.cursor()
 
     template_path = config['template_path']
-
     if not os.path.exists(template_path):
         os.makedirs(template_path)
 
@@ -107,7 +105,6 @@ def download_templates():
     result = c.fetchone()
 
     while result is not None:
-        # print(result)
         # We scrub everything except alphabetic characters from the template name.
         # The uploader get the template id from the file name - so digits can't
         # be allowed here and other characters are a headache for a label.
@@ -130,14 +127,30 @@ def download_templates():
 
 def main():
     config_path = None
-    if len(sys.argv) > 1:
-        config_path = sys.argv[1]
-    if config_path is None:
-        print("Missing config file path as first parameter.")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-c", "--config", help="Path to config.json file.", required=True)
+    parser.add_argument("-o", "--operation", help="Operation for sync script (upload or download).", required=True)
+    args = parser.parse_args()
+
+    if args.config is None:
+        print("Missing correct config file path as first parameter.")
         exit()
 
     global config
-    config = get_config(config_path)
+    config = get_config(args.config)
+
+    if str(args.operation) == 'download':
+        print("Downloading templates.")
+        download_templates()
+
+    elif args.operation == "upload":
+        print("Uploading templates.")
+        upload_templates()
+
+    else:
+        print("No valid operation found.")
+
+    exit()
 
 
 if __name__ == '__main__':
