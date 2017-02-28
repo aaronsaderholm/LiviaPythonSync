@@ -6,7 +6,18 @@ It is for a proprietary CMS I have to use occasionally.
 
 ## Usage
 
-You need python3 and a number of packages.  Take the config.json.example file change it's values to be correct.  Put it in a folder where you want your content so it looks like this:
+You need python3 and a number of packages.  Create a config.json file or take the included example and change it's values to be correct.
+
+```
+{
+    "mysql_host":"localhost",
+    "mysql_user":"user",
+    "mysql_password":"password",
+    "mysql_database":"database"
+}
+```
+
+Put it in a folder where you want your content so it looks like this:
 
 ```
 content_folder/
@@ -14,6 +25,8 @@ content_folder/
 	uploads/
 	config.json
 ```
+
+The idea is you can keep the content folder in it's own separate source control but how you choose to use it is your deal.
 
 The python script does not upload upload files.  I just use rsync for that, you can use whatever.  As long as the config.json is in the parent folder of the templates folder you should be set.
 
