@@ -37,4 +37,4 @@ python3 main.py -c /path/to/config.json -o download
 python3 main.py -c /path/to/config.json -o upload
 ```
 
-The uploader should only update records that have matching files in the templates folder, but take backups and use this at your own peril.
+The uploader should only update records that have matching files in the templates folder.  Take backups and use this at your own peril.
