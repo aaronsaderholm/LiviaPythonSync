@@ -9,14 +9,15 @@ It is for a proprietary CMS I have to use occasionally.
 You need python3 and a number of packages.  Take the config.json.example file change it's values to be correct.  Put it in a folder where you want your content so it looks like this:
 
 ```
-templates/
-uploads/
-config.json
+content_folder/
+	templates/
+	uploads/
+	config.json
 ```
 
 The python script does not upload upload files.  I just use rsync for that, you can use whatever.  As long as the config.json is in the parent folder of the templates folder you should be set.
 
-From there - run main.py like such:
+From there, run main.py like such:
 
 ```
 python3 main.py -c /path/to/config.json -o download
