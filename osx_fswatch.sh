@@ -25,7 +25,7 @@ touch $LOG_PATH
 echo "Running script located at: ${SCRIPT_PATH}"
 echo "On file change in folder: ${SYNC_PATH}"
 echo "Writing log output to : ${LOG_PATH}"
-exec $SCRIPT_PATH
+exec 
 
 # brew install fswatch
 
